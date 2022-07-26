@@ -290,28 +290,28 @@ public class TestCardDelivery {
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
     }
-    @Test
-    void shouldSubmitRequestIfNameContainOnlyHyphens() {
-        form.$("[data-test-id=city] input").setValue("Москва");
-        form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
-        form.$("[data-test-id=name] input").setValue("-----");
-        form.$("[data-test-id=phone] input").setValue("+79033223322");
-        form.$("[data-test-id=agreement]").click();
-        form.$(".button__text").click();
-        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
-        $("[data-test-id=notification]").shouldNotBe(Condition.visible);
-    }
-    @Test
-    void shouldNotSubmitRequestIfNameContainOnlyOneHyphen() {
-        form.$("[data-test-id=city] input").setValue("Москва");
-        form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
-        form.$("[data-test-id=name] input").setValue("-");
-        form.$("[data-test-id=phone] input").setValue("+79033223322");
-        form.$("[data-test-id=agreement]").click();
-        form.$(".button__text").click();
-        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
-        $("[data-test-id=notification]").shouldNotBe(Condition.visible);
-    }
+//    @Test
+//    void shouldSubmitRequestIfNameContainOnlyHyphens() {
+//        form.$("[data-test-id=city] input").setValue("Москва");
+//        form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
+//        form.$("[data-test-id=name] input").setValue("-----");
+//        form.$("[data-test-id=phone] input").setValue("+79033223322");
+//        form.$("[data-test-id=agreement]").click();
+//        form.$(".button__text").click();
+//        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+//        $("[data-test-id=notification]").shouldNotBe(Condition.visible);
+//    }
+//    @Test
+//    void shouldNotSubmitRequestIfNameContainOnlyOneHyphen() {
+//        form.$("[data-test-id=city] input").setValue("Москва");
+//        form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
+//        form.$("[data-test-id=name] input").setValue("-");
+//        form.$("[data-test-id=phone] input").setValue("+79033223322");
+//        form.$("[data-test-id=agreement]").click();
+//        form.$(".button__text").click();
+//        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+//        $("[data-test-id=notification]").shouldNotBe(Condition.visible);
+//    }
     @Test
     void shouldNotSubmitRequestByNotIncludedCheckbox() {
         form.$("[data-test-id=city] input").setValue("Москва");
