@@ -13,11 +13,12 @@ import org.openqa.selenium.Keys;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 public class TestCardDelivery {
 
@@ -28,27 +29,36 @@ public class TestCardDelivery {
         Configuration.headless = true;
     }
 
+    public String generateDate(int days) {
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
     SelenideElement form = $("form");
-    Date date = new Date();
-    SimpleDateFormat d = new SimpleDateFormat("dd.MM.YYYY");
-    String dateCurrentPlusThreeDays = d.format(DateUtils.addDays(date, 3));
-    String dateCurrentPlusTwoDays = d.format(DateUtils.addDays(date, 2));
-    String dateCurrentPlusFourDays = d.format(DateUtils.addDays(date, 4));
+
+    String dateCurrentPlusThreeDays = generateDate(3);
+    String dateCurrentPlusTwoDays = generateDate(2);
+    String dateCurrentPlusFourDays  = generateDate(4);
 
     @Test
     void shouldSubmitRequest() {
         form.$("[data-test-id=city] input").setValue("Ханты-Мансийск");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79270000000");
         form.$("[data-test-id=agreement]").click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
     }
 
     @Test
     void shouldSubmitRequestIfCityContainЁ() {
         form.$("[data-test-id=city] input").setValue("Орёл");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79270000000");
@@ -60,6 +70,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfCityContainHyphen() {
         form.$("[data-test-id=city] input").setValue("Ростов-на-Дону");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79270000000");
@@ -71,6 +83,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfCityContainSpace() {
         form.$("[data-test-id=city] input").setValue("Нижний Новгород");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79270000000");
@@ -82,6 +96,8 @@ public class TestCardDelivery {
     @Test
     void shouldNotSubmitRequestIfCityIsNotAdminCenter() {
         form.$("[data-test-id=city] input").setValue("Балашиха");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79270000000");
@@ -94,6 +110,8 @@ public class TestCardDelivery {
     @Test
     void shouldNotSubmitRequestIfCityContainLatin() {
         form.$("[data-test-id=city] input").setValue("Ufa");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79270000000");
@@ -106,6 +124,8 @@ public class TestCardDelivery {
     @Test
     void shouldNotSubmitRequestIfCityIsEmpty() {
         form.$("[data-test-id=city] input").setValue("");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79270000000");
@@ -215,6 +235,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameIsMoreTwoWords() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван Иванович");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -227,6 +249,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameContainDigital() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван9");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -239,6 +263,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameContainLatin() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Ivan");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -251,6 +277,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameContainSpecialSymbol() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов_Иван");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -263,6 +291,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameContainOnlyOneWord() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -275,6 +305,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameIsEmpty() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -287,6 +319,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameContainOnlySpaces() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("      ");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -299,6 +333,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameContainHyphen() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов-Задунайский Иван");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -310,6 +346,8 @@ public class TestCardDelivery {
     @Test
     void shouldSubmitRequestIfNameContainOnlyHyphens() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("-----");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -322,6 +360,8 @@ public class TestCardDelivery {
     @Test
     void shouldNotSubmitRequestIfNameContainOnlyOneHyphen() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("-");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -334,6 +374,8 @@ public class TestCardDelivery {
     @Test
     void shouldNotSubmitRequestByNotIncludedCheckbox() {
         form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
@@ -343,4 +385,40 @@ public class TestCardDelivery {
     }
 
 
+    // Задача 2
+
+
+    @Test
+    void shouldSubmitRequestByCitySelectedFromDropDownList() {
+        form.$("[data-test-id=city] input").setValue("Мо");
+        $x("//*[text()='Москва']").click();
+        $("[data-test-id=date] button").setValue(dateCurrentPlusThreeDays);
+        form.$("[data-test-id=name] input").setValue("Иванов Иван");
+        form.$("[data-test-id=phone] input").setValue("+79033223322");
+        form.$("[data-test-id=agreement]").click();
+        form.$(".button__text").click();
+        $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
+    }
+
+
+//   С календарем так и не разобрался...
+
+//    @Test
+//    void shouldSubmitRequestByDateSelectedFromCalendar() {
+//        form.$("[data-test-id=city] input").setValue("Москва");
+//        $("[data-test-id=date] button").click();
+//        $("[data-step]").click();
+//        sleep(160000);
+
+//        $("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
+//        form.$("[data-test-id=name] input").setValue("Иванов Иван");
+//        form.$("[data-test-id=phone] input").setValue("+79033223322");
+//        form.$("[data-test-id=agreement]").click();
+//        form.$(".button__text").click();
+//        $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+//        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15))
+//                .shouldBe(Condition.visible);
+    }
 }
