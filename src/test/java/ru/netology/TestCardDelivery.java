@@ -416,7 +416,6 @@ public class TestCardDelivery {
     }
 
 
-//   С календарем так и не разобрался...
 
     @Test
     void shouldSubmitRequestByDateSelectedFromCalendar() {
