@@ -65,6 +65,8 @@ public class TestCardDelivery {
         form.$("[data-test-id=agreement]").click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15));
+
     }
 
     @Test
@@ -78,6 +80,8 @@ public class TestCardDelivery {
         form.$("[data-test-id=agreement]").click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15));
+
     }
 
     @Test
@@ -91,6 +95,8 @@ public class TestCardDelivery {
         form.$("[data-test-id=agreement]").click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15));
+
     }
 
     @Test
@@ -160,6 +166,8 @@ public class TestCardDelivery {
         form.$("[data-test-id=agreement]").click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusFourDays), Duration.ofSeconds(15));
+
     }
 
     @Test
@@ -341,6 +349,8 @@ public class TestCardDelivery {
         form.$("[data-test-id=agreement]").click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15));
+
     }
 
     @Test
@@ -392,7 +402,10 @@ public class TestCardDelivery {
     void shouldSubmitRequestByCitySelectedFromDropDownList() {
         form.$("[data-test-id=city] input").setValue("Мо");
         $x("//*[text()='Москва']").click();
-        $("[data-test-id=date] button").setValue(dateCurrentPlusThreeDays);
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
+        form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
+        $("[data-test-id=date] button").click();
         form.$("[data-test-id=name] input").setValue("Иванов Иван");
         form.$("[data-test-id=phone] input").setValue("+79033223322");
         form.$("[data-test-id=agreement]").click();
@@ -405,20 +418,20 @@ public class TestCardDelivery {
 
 //   С календарем так и не разобрался...
 
-//    @Test
-//    void shouldSubmitRequestByDateSelectedFromCalendar() {
-//        form.$("[data-test-id=city] input").setValue("Москва");
-//        $("[data-test-id=date] button").click();
-//        $("[data-step]").click();
-//        sleep(160000);
-
-//        $("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
-//        form.$("[data-test-id=name] input").setValue("Иванов Иван");
-//        form.$("[data-test-id=phone] input").setValue("+79033223322");
-//        form.$("[data-test-id=agreement]").click();
-//        form.$(".button__text").click();
-//        $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
-//        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + dateCurrentPlusThreeDays), Duration.ofSeconds(15))
-//                .shouldBe(Condition.visible);
+    @Test
+    void shouldSubmitRequestByDateSelectedFromCalendar() {
+        form.$("[data-test-id=city] input").setValue("Москва");
+        form.$("[data-test-id=name] input").setValue("Иванов Иван");
+        form.$("[data-test-id=phone] input").setValue("+79033223322");
+        form.$("[data-test-id=agreement]").click();
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
+        $("[data-test-id=date] button").click();
+        $("button[type=button] .icon_name_calendar").click();
+        $("[data-day='1659733200000'] ").click();
+        form.$(".button__text").click();
+        $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на 06.08.2022"), Duration.ofSeconds(15))
+                .shouldBe(Condition.visible);
     }
 }
