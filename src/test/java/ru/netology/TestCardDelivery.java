@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
 public class TestCardDelivery {
@@ -37,7 +38,7 @@ public class TestCardDelivery {
 
     String dateCurrentPlusThreeDays = generateDate(3);
     String dateCurrentPlusTwoDays = generateDate(2);
-    String dateCurrentPlusFourDays  = generateDate(4);
+    String dateCurrentPlusFourDays = generateDate(4);
 
     @Test
     void shouldSubmitRequest() {
@@ -400,8 +401,8 @@ public class TestCardDelivery {
 
     @Test
     void shouldSubmitRequestByCitySelectedFromDropDownList() {
-        form.$("[data-test-id=city] input").setValue("Мо");
-        $x("//*[text()='Москва']").click();
+        $("[data-test-id='city'] input").sendKeys("Мо");
+        $$(".menu-item").findBy(text("Москва")).click();
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
@@ -416,7 +417,6 @@ public class TestCardDelivery {
     }
 
 
-
     @Test
     void shouldSubmitRequestByDateSelectedFromCalendar() {
         form.$("[data-test-id=city] input").setValue("Москва");
@@ -425,12 +425,15 @@ public class TestCardDelivery {
         form.$("[data-test-id=agreement]").click();
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
-        $("[data-test-id=date] button").click();
-        $("button[type=button] .icon_name_calendar").click();
-        $("[data-day='1659733200000'] ").click();
+        LocalDate selected = LocalDate.now().plusDays(3);
+        LocalDate required = LocalDate.now().plusDays(7);
+        if (selected.getMonthValue() != required.getMonthValue()) {
+            $("[data-step='1']").click();
+        }
+        $$("tr td").findBy(text(String.valueOf(required.getDayOfMonth()))).click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
-        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на 06.08.2022"), Duration.ofSeconds(15))
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на 10.08.2022"), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
     }
 }
