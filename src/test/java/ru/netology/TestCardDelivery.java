@@ -403,6 +403,8 @@ public class TestCardDelivery {
     void shouldSubmitRequestByCitySelectedFromDropDownList() {
         $("[data-test-id='city'] input").sendKeys("Мо");
         $$(".menu-item").findBy(text("Москва")).click();
+//        form.$("[data-test-id=city] input").setValue("Мо");
+////        $x("//*[text()='Москва']").click();
         form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
         form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
         form.$("[data-test-id=date] input").setValue(dateCurrentPlusThreeDays);
@@ -433,7 +435,47 @@ public class TestCardDelivery {
         $$("tr td").findBy(text(String.valueOf(required.getDayOfMonth()))).click();
         form.$(".button__text").click();
         $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
-        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на 10.08.2022"), Duration.ofSeconds(15))
+        $(".notification__content").shouldHave(Condition.text("Встреча успешно забронирована на " + required), Duration.ofSeconds(15))
                 .shouldBe(Condition.visible);
     }
+
+    @Test
+    void shouldSubmitRequestByCitySelectedFromDropDownListAndDateSelectedFromCalendar() {
+        $("[data-test-id='city'] input").sendKeys("Мо");
+        $$(".menu-item").findBy(text("Москва")).click();
+        form.$("[data-test-id=date] input").sendKeys(Keys.CONTROL + "a");
+        form.$("[data-test-id=date] input").sendKeys(Keys.DELETE);
+        LocalDate selected = LocalDate.now().plusDays(3);
+        LocalDate required = LocalDate.now().plusDays(900);
+        $("[data-test-id=date] button").click();
+        if (selected.getYear() != required.getYear()) {
+            int colioYears = required.getYear() - selected.getYear();
+            for (int i = 0; i < colioYears; i++) {
+                $("[data-step='12']").click();
+            }
+        }
+        if (selected.getMonthValue() != required.getMonthValue()) {
+            int colioMonth = Math.abs(required.getMonthValue() - selected.getMonthValue());
+            if (required.getMonthValue() < selected.getMonthValue()) {
+                for (int i = 0; i < colioMonth; i++) {
+                    $("[data-step='-1']").click();
+                }
+            } else {
+                for (int i = 0; i < colioMonth; i++) {
+                    $("[data-step='1']").click();
+                }
+            }
+
+            $$("tr td").findBy(text(String.valueOf(required.getDayOfMonth()))).click();
+            form.$("[data-test-id=name] input").setValue("Иванов Иван");
+            form.$("[data-test-id=phone] input").setValue("+79033223322");
+            form.$("[data-test-id=agreement]").click();
+            form.$(".button__text").click();
+            $("[data-test-id=notification]").shouldBe(Condition.visible, Duration.ofSeconds(15));
+            $(".notification__content").shouldHave(Condition.text(
+                            "Встреча успешно забронирована на " + required.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))), Duration.ofSeconds(15))
+                    .shouldBe(Condition.visible);
+        }
+    }
 }
+
